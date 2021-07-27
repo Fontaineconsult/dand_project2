@@ -18,8 +18,37 @@ create or replace stage weather_precipitation file_format = weather_CSV;
 create or replace stage weather_temperature file_format = weather_CSV;
 
 
-create table "business_json" (business_json variant);
+create or replace table "yelp_business_json" (business_json variant);
+create or replace table "yelp_checkin_json" (checkin_json variant);
+create or replace table "yelp_review_json" (yelp_review_json variant);
+create or replace table "yelp_tip_json" (yelp_tip_json variant);
+create or replace table "yelp_user_json" (yelp_user_json variant);
+create or replace table "yelp_covid_json" (yelp_covid_json variant);
 
-put file:///C:/Users/913678186/Desktop/DANDProj2/yelp_data/yelp_business.json
+create table "temperature_csv" (temp_csv variant);
+create table "precipitation_csv" (precipitation_csv variant);
 
-copy into "business" from @YELP_BUSINESS/yelp_business.json file_format=yelp_json on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/yelp_business.json @yelp_business auto_compress=true parallel=4;
+copy into "yelp_business_json" from @YELP_BUSINESS/yelp_business.json file_format=yelp_json on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/yelp_checkin.json @yelp_checkin auto_compress=true parallel=4;
+copy into "yelp_checkin_json" from @yelp_checkin/yelp_checkin.json file_format=yelp_json on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/yelp_review.json @yelp_review auto_compress=true parallel=4;
+copy into "yelp_review_json" from @yelp_review/yelp_review.json file_format=yelp_json on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/yelp_tip.json @yelp_tip auto_compress=true parallel=4;
+copy into "yelp_tip_json" from @yelp_tip/yelp_tip.json file_format=yelp_json on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/yelp_user.json @yelp_user auto_compress=true parallel=4;
+copy into "yelp_user_json" from @yelp_user/yelp_user.json file_format=yelp_json on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/yelp_covid.json @yelp_covid auto_compress=true parallel=4;
+copy into "yelp_covid_json" from @yelp_covid/yelp_covid.json file_format=yelp_json on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/temperature.csv @weather_temperature auto_compress=true parallel=4;
+copy into "temperature_csv" from @weather_temperature/temperature.json file_format=weather_CSV on_error='skip_file';
+
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/precipitation.csv @weather_precipitation auto_compress=true parallel=4;
+copy into "precipitation_csv" from @weather_precipitation/precipitation.csv file_format=weather_CSV on_error='skip_file';
