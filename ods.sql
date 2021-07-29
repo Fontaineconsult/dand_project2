@@ -67,8 +67,8 @@
 -- from
 --     "STAGING"."business_json"
 --    , lateral flatten( input => to_array(SPLIT(BUSINESS_JSON:categories, ',')));
---
---
+
+
 --
 --
 -- CREATE TABLE "Yelp_Business_Categories" (
@@ -80,51 +80,71 @@
 
 
 
-CREATE TABLE "Yelp_Business" (
-                             "business_id" string(22),
-                             "name" string,
-                             "address" string,
-                             "city" string,
-                             "state" string(2),
-                             "postal_code" string(5),
-                             "latitude" float,
-                             "longitude" float,
-                             "stars" float,
-                             "review_count" integer,
-                             "is_open" integer,
-                             "hours" integer
+-- CREATE OR REPLACE TABLE ODS."Yelp_Business" ("business_id" string(22) PRIMARY KEY, "name" string, "address" string, "city" string, "state" string, "postal_code" string, "latitude" float, "longitude" float, "stars" float, "review_count" integer,"is_open" integer
+-- );
+-- INSERT INTO ODS."Yelp_Business" ("business_id", "name", "address", "city", "state", "postal_code", "latitude", "longitude", "stars", "review_count", "is_open"                               )
+-- SELECT LTRIM(BUSINESS_JSON:business_id), BUSINESS_JSON:name, BUSINESS_JSON:address, BUSINESS_JSON:city, BUSINESS_JSON:state, BUSINESS_JSON:postal_code, BUSINESS_JSON:latitude, BUSINESS_JSON:longitude, BUSINESS_JSON:stars, BUSINESS_JSON:review_count, BUSINESS_JSON:is_open
+-- FROM STAGING."business_json";
 
-);
+-- CREATE OR REPLACE TABLE ODS."Yelp_Review" (
+--                                               "review_id" string(22),
+--                                               "user_id" string(22),
+--                                               "business_id" string(22),
+--                                               "stars" integer,
+--                                               "date" date,
+--                                               "text" string,
+--                                               "useful" integer,
+--                                               "funny" integer,
+--                                               "cool" integer
+-- );
+--
+-- INSERT INTO ODS."Yelp_Review" ("review_id", "user_id", "business_id", "stars", "date", "text", "useful", "funny", "cool")
+-- SELECT LTRIM(YELP_REVIEW_JSON:review_id), LTRIM(YELP_REVIEW_JSON:user_id), LTRIM(YELP_REVIEW_JSON:business_id), YELP_REVIEW_JSON:stars, YELP_REVIEW_JSON:date, YELP_REVIEW_JSON:text, YELP_REVIEW_JSON:useful, YELP_REVIEW_JSON:funny, YELP_REVIEW_JSON:cool
+-- FROM STAGING."yelp_review_json";
 
-CREATE TABLE "Yelp_Review" (
-                               "review_id" string(22),
-                               "user_id" string(22),
-                               "business_id" string(22),
-                               "stars" integer,
-                               "date" date,
-                               "text" string,
-                               "useful" integer,
-                               "funny" integer,
-                               "cool" integer
-);
+-- CREATE OR REPLACE TABLE ODS."Yelp_Checkin" (
+--                                                "business_id" string(22),
+--                                                "date" string
+-- );
+--
+-- insert into ODS."Yelp_Checkin" ("business_id", "date")
+-- select
+--     CHECKIN_JSON:business_id,
+--     LTRIM(value) as date
+-- from
+--     "STAGING"."yelp_checkin_json"
+--    , lateral flatten( input => to_array(SPLIT(CHECKIN_JSON:date, ',')));
 
-CREATE TABLE "Yelp_Checkin" (
-                                "business_id" string(22),
-                                "date" date
-);
 
-CREATE TABLE "Yelp_Tip" (
-                            "text" string,
-                            "date" string,
-                            "compliment_count" integer,
-                            "business_id" string(22),
-                            "user_id" string(22)
-);
+-- CREATE OR REPLACE TABLE ODS."Yelp_Tip" (
+--                                            "text" string,
+--                                            "date" string,
+--                                            "compliment_count" integer,
+--                                            "business_id" string(22),
+--                                            "user_id" string(22)
+-- );
+-- INSERT INTO ODS."Yelp_Tip" ("text", "date", "compliment_count", "business_id", "user_id")
+-- SELECT YELP_TIP_JSON:text, YELP_TIP_JSON:date, YELP_TIP_JSON:compliment_count, YELP_TIP_JSON:business_id, YELP_TIP_JSON:user_id
+-- FROM STAGING."yelp_tip_json";
+--
+--
+-- CREATE OR REPLACE TABLE ODS."Yelp_Photo" (
+--                                              "photo_id" string(22),
+--                                              "business_id" string(22),
+--                                              "caption" string,
+--                                              "label" string
+-- );
+-- INSERT INTO ODS."Yelp_Photo"("photo_id", "business_id", "caption", "label")
+-- SELECT  YELP_PHOTOS_JSON:photo_id, YELP_PHOTOS_JSON:business_id, YELP_PHOTOS_JSON:caption, YELP_PHOTOS_JSON:label
+-- FROM STAGING."yelp_photos_json";
 
-CREATE TABLE "Yelp_Photo" (
-                              "photo_id" string(22),
-                              "business_id" string(22),
-                              "caption" string,
-                              "label" string
-);
+CREATE OR REPLACE TABLE ODS."Weather_Precipitation" (Date integer, Precipitation integer, Precipitation_Normal integer);
+INSERT INTO ODS."Weather_Precipitation" ("DATE", "PRECIPITATION", "PRECIPITATION_NORMAL")
+SELECT DATE, PRECIPITATION, PRECIPITATION_NORMAL
+FROM STAGING."precipitation_csv";
 
+
+CREATE OR REPLACE TABLE ODS."Weather_Temperature" (Date integer, min integer, max integer, Normal_Min float, Normal_Max float);
+INSERT INTO ODS."Weather_Temperature" ("DATE", "MIN", "MAX", "NORMAL_MIN", "NORMAL_MAX")
+SELECT  DATE, MIN, MAX, NORMAL_MIN, NORMAL_MAX
+FROM STAGING."temperature_csv";
