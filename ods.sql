@@ -1,23 +1,25 @@
+--Business Hours--
+
 CREATE OR REPLACE TABLE ODS."Yelp_Business_Hours" (
-                                                      "id" NUMBER AUTOINCREMENT start 1 increment 1,
-                                                      "business_id" string(22),
-                                                      "monday" string,
-                                                      "tuesday" string,
-                                                      "wednesday" string,
-                                                      "thursday" string,
-                                                      "friday" string,
-                                                      "saturday" string,
-                                                      "sunday" string
+                  "id" NUMBER AUTOINCREMENT start 1 increment 1,
+                  "business_id" string(22),
+                  "monday" string,
+                  "tuesday" string,
+                  "wednesday" string,
+                  "thursday" string,
+                  "friday" string,
+                  "saturday" string,
+                  "sunday" string
 
 );
 
 
 insert into ODS."Yelp_Business_Hours" ("business_id", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday")
 select BUSINESS_JSON:business_id, BUSINESS_JSON:hours:Monday, BUSINESS_JSON:hours:Tuesday, BUSINESS_JSON:hours:Wednesday, BUSINESS_JSON:hours:Thursday, BUSINESS_JSON:hours:Friday, BUSINESS_JSON:hours:Saturday, BUSINESS_JSON:hours:Sunday
-from "business_json";
+from STAGING."business_json";
 
 
---
+--Yelp_Users--
 
 CREATE TABLE ODS."Yelp_User" ( "user_id" string(22),"name" string, "review_count" integer, "yelping_since" string, "useful" integer, "funny" integer, "cool" integer, "fans" integer, "average_stars" integer, "compliment_hot" integer, "compliment_more" integer, "compliment_profile" integer, "compliment_cute" integer, "compliment_list" integer, "compliment_note" integer, "compliment_plain" integer, "compliment_cool" integer, "compliment_funny" integer, "compliment_writer" integer, "compliment_photos" integer, PRIMARY KEY ("user_id"));
 INSERT INTO ODS."Yelp_User" ( "user_id", "name", "review_count", "yelping_since", "useful", "funny","cool", "fans", "average_stars", "compliment_hot", "compliment_more", "compliment_profile", "compliment_cute", "compliment_list", "compliment_note", "compliment_plain", "compliment_cool", "compliment_funny", "compliment_writer", "compliment_photos")
@@ -26,11 +28,11 @@ from STAGING."yelp_user_json";
 
 
 
---
+--Yelp_Years_Elite--
 CREATE OR REPLACE TABLE ODS."Yelp_Years_Elite" (
-                                                   "user_id" string(22),
-                                                   "year" string,
-                                                   PRIMARY KEY ("user_id", "year")
+                   "user_id" string(22),
+                   "year" string,
+                   PRIMARY KEY ("user_id", "year")
 );
 
 insert into ODS."Yelp_Years_Elite" ("user_id", "year")
@@ -42,12 +44,12 @@ from
 
 
 
---
+--Yelp_Friends_List--
 
 CREATE OR REPLACE TABLE ODS."Yelp_Friends_List" (
-                                                    "user_id" string(23),
-                                                    "friend_id" string(23),
-                                                    PRIMARY KEY ("user_id", "friend_id")
+                    "user_id" string(23),
+                    "friend_id" string(23),
+                    PRIMARY KEY ("user_id", "friend_id")
 
 );
 
@@ -60,7 +62,7 @@ from
 
 
 
---
+--Yelp_Business_Categories_List--
 
 CREATE OR REPLACE TABLE ODS."Yelp_Business_Categories_List" (
             "id"  NUMBER AUTOINCREMENT start 1 increment 1,
@@ -76,10 +78,7 @@ from
    , lateral flatten( input => to_array(SPLIT(BUSINESS_JSON:categories, ',')));
 
 
---
-
-
-
+--Yelp_Business_Categories_Assignments--
 
 CREATE OR REPLACE TABLE ODS."Yelp_Business_Categories_Assignments"
 (
@@ -100,11 +99,8 @@ FROM ODS."Yelp_Business_Categories_List"
          , lateral flatten( input => to_array(SPLIT(BUSINESS_JSON:categories, ',')))) as a
      ON ODS."Yelp_Business_Categories_List"."category_name" = a.category_name;
 
---
 
-
-
-
+--Yelp_Business--
 
 CREATE OR REPLACE TABLE ODS."Yelp_Business" ("business_id" string(22) PRIMARY KEY, "name" string, "address" string, "city" string, "state" string, "postal_code" string, "latitude" float, "longitude" float, "stars" float, "review_count" integer,"is_open" integer
 );
@@ -124,7 +120,7 @@ CREATE OR REPLACE TABLE ODS."Yelp_Review" (
                                               "cool" integer
 );
 
---
+--Yelp_Review--
 
 INSERT INTO ODS."Yelp_Review" ("review_id", "user_id", "business_id", "stars", "date", "text", "useful", "funny", "cool")
 SELECT LTRIM(YELP_REVIEW_JSON:review_id), LTRIM(YELP_REVIEW_JSON:user_id), LTRIM(YELP_REVIEW_JSON:business_id), YELP_REVIEW_JSON:stars, YELP_REVIEW_JSON:date, YELP_REVIEW_JSON:text, YELP_REVIEW_JSON:useful, YELP_REVIEW_JSON:funny, YELP_REVIEW_JSON:cool
@@ -143,7 +139,7 @@ from
     "STAGING"."yelp_checkin_json"
    , lateral flatten( input => to_array(SPLIT(CHECKIN_JSON:date, ',')));
 
---
+--Yelp_Tip--
 
 CREATE OR REPLACE TABLE ODS."Yelp_Tip" (
                                            "text" string,
@@ -156,7 +152,7 @@ INSERT INTO ODS."Yelp_Tip" ("text", "date", "compliment_count", "business_id", "
 SELECT YELP_TIP_JSON:text, YELP_TIP_JSON:date, YELP_TIP_JSON:compliment_count, YELP_TIP_JSON:business_id, YELP_TIP_JSON:user_id
 FROM STAGING."yelp_tip_json";
 
---
+--Yelp_Photo--
 
 CREATE OR REPLACE TABLE ODS."Yelp_Photo" (
                                              "photo_id" string(22),
@@ -170,7 +166,7 @@ SELECT  YELP_PHOTOS_JSON:photo_id, YELP_PHOTOS_JSON:business_id, YELP_PHOTOS_JSO
 FROM STAGING."yelp_photos_json";
 
 
---
+--Weather_Precipitation--
 
 CREATE OR REPLACE TABLE ODS."Weather_Precipitation" (Date integer, Precipitation integer, Precipitation_Normal integer);
 INSERT INTO ODS."Weather_Precipitation" ("DATE", "PRECIPITATION", "PRECIPITATION_NORMAL")
@@ -178,7 +174,7 @@ SELECT DATE, PRECIPITATION, PRECIPITATION_NORMAL
 FROM STAGING."precipitation_csv";
 
 
---
+--Weather_Temperature--
 
 CREATE OR REPLACE TABLE ODS."Weather_Temperature" (Date integer, min integer, max integer, Normal_Min float, Normal_Max float);
 INSERT INTO ODS."Weather_Temperature" ("DATE", "MIN", "MAX", "NORMAL_MIN", "NORMAL_MAX")
@@ -199,7 +195,7 @@ CREATE OR REPLACE TABLE ODS."Yelp_Covid" (
 );
 
 
---
+--Yelp_Covid--
 
 INSERT INTO ODS."Yelp_Covid"("call_to_action_enabled", "covid_banner", "grubhub_enabled", "request_a_quote_enabled", "temporary_closed_until", "virtual_services_offered", "business_id", "delivery_or_takeout", "highlights")
 select YELP_COVID_JSON:"Call To Action enabled", YELP_COVID_JSON:"Covid Banner",YELP_COVID_JSON:"Grubhub enabled", YELP_COVID_JSON:"Request a Quote Enabled", YELP_COVID_JSON:"Temporary Closed Until", YELP_COVID_JSON:"Virtual Services Offered", YELP_COVID_JSON:"business_id", YELP_COVID_JSON:"delivery or takeout", YELP_COVID_JSON:"highlights"
