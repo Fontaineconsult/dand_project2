@@ -138,13 +138,29 @@
 -- SELECT  YELP_PHOTOS_JSON:photo_id, YELP_PHOTOS_JSON:business_id, YELP_PHOTOS_JSON:caption, YELP_PHOTOS_JSON:label
 -- FROM STAGING."yelp_photos_json";
 
-CREATE OR REPLACE TABLE ODS."Weather_Precipitation" (Date integer, Precipitation integer, Precipitation_Normal integer);
-INSERT INTO ODS."Weather_Precipitation" ("DATE", "PRECIPITATION", "PRECIPITATION_NORMAL")
-SELECT DATE, PRECIPITATION, PRECIPITATION_NORMAL
-FROM STAGING."precipitation_csv";
+-- CREATE OR REPLACE TABLE ODS."Weather_Precipitation" (Date integer, Precipitation integer, Precipitation_Normal integer);
+-- INSERT INTO ODS."Weather_Precipitation" ("DATE", "PRECIPITATION", "PRECIPITATION_NORMAL")
+-- SELECT DATE, PRECIPITATION, PRECIPITATION_NORMAL
+-- FROM STAGING."precipitation_csv";
+--
+--
+-- CREATE OR REPLACE TABLE ODS."Weather_Temperature" (Date integer, min integer, max integer, Normal_Min float, Normal_Max float);
+-- INSERT INTO ODS."Weather_Temperature" ("DATE", "MIN", "MAX", "NORMAL_MIN", "NORMAL_MAX")
+-- SELECT  DATE, MIN, MAX, NORMAL_MIN, NORMAL_MAX
+-- FROM STAGING."temperature_csv";
 
-
-CREATE OR REPLACE TABLE ODS."Weather_Temperature" (Date integer, min integer, max integer, Normal_Min float, Normal_Max float);
-INSERT INTO ODS."Weather_Temperature" ("DATE", "MIN", "MAX", "NORMAL_MIN", "NORMAL_MAX")
-SELECT  DATE, MIN, MAX, NORMAL_MIN, NORMAL_MAX
-FROM STAGING."temperature_csv";
+-- CREATE OR REPLACE TABLE ODS."Yelp_Covid" (
+--                                              "call_to_action_enabled" boolean,
+--                                              "covid_banner" string,
+--                                              "grubhub_enabled" string,
+--                                              "request_a_quote_enabled" string,
+--                                              "temporary_closed_until" string,
+--                                              "virtual_services_offered" string,
+--                                              "business_id" string,
+--                                              "delivery_or_takeout" string,
+--                                              "highlights" string
+-- );
+--
+-- INSERT INTO ODS."Yelp_Covid"("call_to_action_enabled", "covid_banner", "grubhub_enabled", "request_a_quote_enabled", "temporary_closed_until", "virtual_services_offered", "business_id", "delivery_or_takeout", "highlights")
+-- select YELP_COVID_JSON:"Call To Action enabled", YELP_COVID_JSON:"Covid Banner",YELP_COVID_JSON:"Grubhub enabled", YELP_COVID_JSON:"Request a Quote Enabled", YELP_COVID_JSON:"Temporary Closed Until", YELP_COVID_JSON:"Virtual Services Offered", YELP_COVID_JSON:"business_id", YELP_COVID_JSON:"delivery or takeout", YELP_COVID_JSON:"highlights"
+-- FROM STAGING."yelp_covid_json"
