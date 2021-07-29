@@ -19,7 +19,7 @@ from "business_json";
 
 --
 
-CREATE TABLE ODS."Yelp_User" ( "user_id" string(22),"name" string, "review_count" integer, "yelping_since" string, "useful" integer, "funny" integer, "cool" integer, "fans" integer, "average_stars" integer, "compliment_hot" integer, "compliment_more" integer, "compliment_profile" integer, "compliment_cute" integer, "compliment_list" integer, "compliment_note" integer, "compliment_plain" integer, "compliment_cool" integer, "compliment_funny" integer, "compliment_writer" integer, "compliment_photos" integer);
+CREATE TABLE ODS."Yelp_User" ( "user_id" string(22),"name" string, "review_count" integer, "yelping_since" string, "useful" integer, "funny" integer, "cool" integer, "fans" integer, "average_stars" integer, "compliment_hot" integer, "compliment_more" integer, "compliment_profile" integer, "compliment_cute" integer, "compliment_list" integer, "compliment_note" integer, "compliment_plain" integer, "compliment_cool" integer, "compliment_funny" integer, "compliment_writer" integer, "compliment_photos" integer, PRIMARY KEY ("user_id"));
 INSERT INTO ODS."Yelp_User" ( "user_id", "name", "review_count", "yelping_since", "useful", "funny","cool", "fans", "average_stars", "compliment_hot", "compliment_more", "compliment_profile", "compliment_cute", "compliment_list", "compliment_note", "compliment_plain", "compliment_cool", "compliment_funny", "compliment_writer", "compliment_photos")
 select YELP_USER_JSON:user_id, YELP_USER_JSON:name, YELP_USER_JSON:review_count, YELP_USER_JSON:yelping_since, YELP_USER_JSON:useful, YELP_USER_JSON:funny, YELP_USER_JSON:cool, YELP_USER_JSON:fans, YELP_USER_JSON:average_stars, YELP_USER_JSON:compliment_hot, YELP_USER_JSON:compliment_more, YELP_USER_JSON:compliment_profile, YELP_USER_JSON:compliment_cute, YELP_USER_JSON:compliment_list, YELP_USER_JSON:compliment_note, YELP_USER_JSON:compliment_plain, YELP_USER_JSON:compliment_cool, YELP_USER_JSON:compliment_funny, YELP_USER_JSON:compliment_writer, YELP_USER_JSON:compliment_photos
 from STAGING."yelp_user_json";
@@ -192,9 +192,10 @@ CREATE OR REPLACE TABLE ODS."Yelp_Covid" (
                                              "request_a_quote_enabled" string,
                                              "temporary_closed_until" string,
                                              "virtual_services_offered" string,
-                                             "business_id" string,
+                                             "business_id" string references ODS."Yelp_Business" ("business_id"),
                                              "delivery_or_takeout" string,
-                                             "highlights" string
+                                             "highlights" string,
+                                              primary key ("business_id")
 );
 
 
