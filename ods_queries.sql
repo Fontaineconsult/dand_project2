@@ -14,6 +14,7 @@ CREATE OR REPLACE TABLE DWH."Yelp_Checkin_Facts" (
 );
 
 
+
 INSERT INTO DWH."Yelp_Checkin_Facts" ("business_id", "checkin_date", "stars", "precipitation", PRECIPITATION_NORMAL, "max_temp", "min_temp", "normal_max_temp", "normal_min_temp", "temp_closed")
 select ODS."Yelp_Checkin"."business_id",
        TO_Date(ODS."Yelp_Checkin"."date"),
