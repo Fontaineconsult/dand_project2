@@ -102,7 +102,17 @@ FROM ODS."Yelp_Business_Categories_List"
 
 --Yelp_Business--
 
-CREATE OR REPLACE TABLE ODS."Yelp_Business" ("business_id" string(22) PRIMARY KEY, "name" string, "address" string, "city" string, "state" string, "postal_code" string, "latitude" float, "longitude" float, "stars" float, "review_count" integer,"is_open" integer
+CREATE OR REPLACE TABLE ODS."Yelp_Business" ("business_id" string(22) PRIMARY KEY,
+                                             "name" string,
+                                              "address" string,
+                                               "city" string,
+                                                "state" string,
+                                                 "postal_code" string,
+                                                  "latitude" float,
+                                                   "longitude" float,
+                                                    "stars" float,
+                                                     "review_count" integer,
+                                                     "is_open" integer
 );
 INSERT INTO ODS."Yelp_Business" ("business_id", "name", "address", "city", "state", "postal_code", "latitude", "longitude", "stars", "review_count", "is_open"                               )
 SELECT LTRIM(BUSINESS_JSON:business_id), BUSINESS_JSON:name, BUSINESS_JSON:address, BUSINESS_JSON:city, BUSINESS_JSON:state, BUSINESS_JSON:postal_code, BUSINESS_JSON:latitude, BUSINESS_JSON:longitude, BUSINESS_JSON:stars, BUSINESS_JSON:review_count, BUSINESS_JSON:is_open
