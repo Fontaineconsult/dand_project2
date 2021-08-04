@@ -58,10 +58,34 @@ CREATE OR REPLACE TABLE DWH."Yelp_Business_Dim" ("id" NUMBER AUTOINCREMENT start
                                                  "stars" float,
                                                  "review_count" integer,
                                                  "is_open" integer,
+                                                 "hr_monday" string,
+                                                 "hr_tuesday" string,
+                                                 "hr_wednesday" string,
+                                                 "hr_thursday" string,
+                                                 "hr_friday" string,
+                                                 "hr_saturday" string,
+                                                 "hr_sunday" string,
                                                  primary key ("id")
 
 );
-INSERT INTO DWH."Yelp_Business_Dim" ("business_id", "name", "address", "city", "state", "postal_code", "latitude", "longitude", "stars", "review_count", "is_open")
+INSERT INTO DWH."Yelp_Business_Dim" ("business_id",
+                                     "name",
+                                     "address",
+                                     "city",
+                                     "state",
+                                     "postal_code",
+                                     "latitude",
+                                     "longitude",
+                                     "stars",
+                                     "review_count",
+                                     "is_open",
+                                     "hr_monday",
+                                     "hr_tuesday",
+                                     "hr_wednesday",
+                                     "hr_thursday",
+                                     "hr_friday",
+                                     "hr_saturday",
+                                     "hr_sunday")
 SELECT
     ODS."Yelp_Business"."business_id",
     ODS."Yelp_Business"."name",
@@ -73,8 +97,17 @@ SELECT
     ODS."Yelp_Business"."longitude",
     ODS."Yelp_Business"."stars",
     ODS."Yelp_Business"."review_count",
-    ODS."Yelp_Business"."is_open"
-from ODS."Yelp_Business";
+    ODS."Yelp_Business"."is_open",
+    ODS."Yelp_Business_Hours"."monday",
+    ODS."Yelp_Business_Hours"."tuesday",
+    ODS."Yelp_Business_Hours"."wednesday",
+    ODS."Yelp_Business_Hours"."thursday",
+    ODS."Yelp_Business_Hours"."friday",
+    ODS."Yelp_Business_Hours"."saturday",
+    ODS."Yelp_Business_Hours"."sunday"
+
+from ODS."Yelp_Business"
+         JOIN ODS."Yelp_Business_Hours" ON ODS."Yelp_Business"."business_id" = ODS."Yelp_Business_Hours"."business_id"
 
 ---Yelp Covid Dim---
 
@@ -114,5 +147,55 @@ SELECT
     ODS."Yelp_Covid"."highlights"
 FROM ODS."Yelp_Covid";
 
+---Yelp Bus Categories Dim---
+
+CREATE OR REPLACE TABLE DWH."Business_Categories_Dim" (
+                                                          "business_id" string,
+                                                          "business_category" string
+
+);
+
+INSERT INTO DWH."Business_Categories_Dim" ("business_id", "business_category")
+SELECT ODS."Yelp_Business_Categories_Assignments".BUSINESS_ID,
+       ODS."Yelp_Business_Categories_List"."category_name"
+FROM ODS."Yelp_Business_Categories_Assignments"
+         JOIN ODS."Yelp_Business_Categories_List" on ODS."Yelp_Business_Categories_Assignments".CATEGORY_ID = ODS."Yelp_Business_Categories_List"."id"
+
+---Business Review Dim---
+
+CREATE OR REPLACE TABLE DWH."Business_Review_Dim" (
+                                                      "id" NUMBER AUTOINCREMENT start 1 increment 1,
+                                                      "review_id" string,
+                                                      "user_id" string,
+                                                      "business_id" string,
+                                                      "stars" number,
+                                                      "date" DATE,
+                                                      "text" string,
+                                                      "useful" number,
+                                                      "funny" number,
+                                                      "cool" number,
+                                                      primary key ("id")
+
+);
+
+INSERT INTO DWH."Business_Review_Dim" ("review_id",
+                                       "user_id",
+                                       "business_id",
+                                       "stars",
+                                       "date",
+                                       "text",
+                                       "useful",
+                                       "funny",
+                                       "cool")
+SELECT "review_id",
+       "user_id",
+       "business_id",
+       "stars",
+       "date",
+       "text",
+       "useful",
+       "funny",
+       "cool"
+FROM ODS."Yelp_Review";
 
 
