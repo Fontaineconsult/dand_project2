@@ -28,7 +28,7 @@ create or replace table "yelp_photos_json" (yelp_photos_json variant);
 create or replace table "yelp_covid_json" (yelp_covid_json variant);
 
 create or replace table "temperature_csv" (date integer, min integer, max integer, normal_min float, normal_max float);
-create or replace table "precipitation_csv" (date integer, precipitation integer, precipitation_normal integer);
+create or replace table "precipitation_csv" (date integer, precipitation float, precipitation_normal float);
 
 
 put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/yelp_business.json @yelp_business auto_compress=true parallel=4;
@@ -52,11 +52,11 @@ copy into staging."yelp_covid_json" from @yelp_covid/yelp_covid.json file_format
 put file:///C:/Users/913678186/Desktop/DANDProj2/yelp_data/yelp_academic_dataset_photos.json @yelp_photos auto_compress=true parallel=4;
 copy into staging."yelp_photos_json" from @yelp_photos/yelp_academic_dataset_photos.json file_format=yelp_json on_error='skip_file';
 
-put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/temperature.csv @weather_temperature auto_compress=true parallel=4;
-copy into staging."temperature_csv" from @weather_temperature/temperature.json file_format=weather_CSV on_error='skip_file';
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/weather_data/portland/portland_temp.csv @weather_temperature auto_compress=true parallel=4;
+copy into staging."temperature_csv" from @weather_temperature/portland_temp.csv file_format=weather_CSV on_error='skip_file';
 
-put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/yelp_data/precipitation.csv @weather_precipitation auto_compress=true parallel=4;
-copy into staging."precipitation_csv" from @weather_precipitation/precipitation.csv file_format=weather_CSV on_error='skip_file';
+put file:///C:/Users/DanielPC/Desktop/UdacityDevOps/dand_project2/weather_data/portland/portland_precip.csv @weather_precipitation auto_compress=true parallel=4;
+copy into staging."precipitation_csv" from @weather_precipitation/portland_precip.csv file_format=weather_CSV on_error='skip_file';
 
 
 
