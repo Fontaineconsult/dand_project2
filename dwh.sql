@@ -1,3 +1,6 @@
+---This code moves data from the ODS to the DHW
+
+
 ---DWH Fact Table---
 
 CREATE OR REPLACE TABLE DWH."Yelp_Checkin_Facts"

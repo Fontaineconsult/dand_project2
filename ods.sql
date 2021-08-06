@@ -1,3 +1,6 @@
+--- This code moves data from the staging tables into the ODS
+
+
 --Business Hours--
 
 CREATE OR REPLACE TABLE ODS."Yelp_Business_Hours" (
