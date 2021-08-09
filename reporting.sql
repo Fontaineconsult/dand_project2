@@ -15,7 +15,7 @@ FROM DWH."Yelp_Checkin_Facts"
          JOIN DWH."Yelp_Business_Dim" ON DWH."Yelp_Checkin_Facts"."business_id" = DWH."Yelp_Business_Dim"."business_id";
 
 ---Query DWH for Portland---
-select DWH."Yelp_Business_Dim"."name",
+select DWH."Yelp_Business_Dim"."name" as business_name,
        DWH."Yelp_Business_Dim"."city",
        DWH."Yelp_Checkin_Facts"."max_temp",
        DWH."Yelp_Checkin_Facts"."min_temp",
@@ -26,25 +26,19 @@ FROM DWH."Yelp_Checkin_Facts"
          JOIN DWH."Yelp_Business_Dim" ON DWH."Yelp_Checkin_Facts"."business_id" = DWH."Yelp_Business_Dim"."business_id"
 WHERE DWH."Yelp_Business_Dim"."city" = 'Portland';
 
+---Aggregates Checkins by date and averages stars---
 
----Count of Checkins with Weather for Portland---
-
-select COUNT(DWH."Yelp_Checkin_Facts"."checkin_date") as "Checkin Count",
-       DWH."Yelp_Checkin_Facts"."checkin_date",
+select COUNT(DWH."Yelp_Checkin_Facts"."review_date") as "Checkin Count",
+       DWH."Yelp_Checkin_Facts"."review_date",
+       avg(DWH."Yelp_Checkin_Facts"."stars") as average_stars,
        DWH."Yelp_Checkin_Facts"."max_temp",
        DWH."Yelp_Checkin_Facts"."min_temp",
-       DWH."Yelp_Checkin_Facts"."precipitation",
-
+       DWH."Yelp_Checkin_Facts"."precipitation"
 
 
 
 FROM DWH."Yelp_Checkin_Facts"
          JOIN DWH."Yelp_Business_Dim" ON DWH."Yelp_Checkin_Facts"."business_id" = DWH."Yelp_Business_Dim"."business_id"
 WHERE DWH."Yelp_Business_Dim"."city" = 'Portland'
-GROUP BY DWH."Yelp_Checkin_Facts"."checkin_date", DWH."Yelp_Checkin_Facts"."max_temp", DWH."Yelp_Checkin_Facts"."min_temp", DWH."Yelp_Checkin_Facts"."precipitation"
-ORDER BY COUNT(DWH."Yelp_Checkin_Facts"."checkin_date") asc ;
-
-
-
-
-
+GROUP BY DWH."Yelp_Checkin_Facts"."review_date", DWH."Yelp_Checkin_Facts"."max_temp", DWH."Yelp_Checkin_Facts"."min_temp", DWH."Yelp_Checkin_Facts"."precipitation"
+ORDER BY avg(DWH."Yelp_Checkin_Facts"."stars") asc ;

@@ -7,7 +7,8 @@ CREATE OR REPLACE TABLE DWH."Yelp_Checkin_Facts"
 (
     "id"                   NUMBER AUTOINCREMENT start 1 increment 1,
     "business_id"          STRING,
-    "checkin_date"         date,
+    "review_date"          date,
+    "business_name"        STRING,
     "stars"                DOUBLE,
     "precipitation"        float,
     "PRECIPITATION_NORMAL" float,
@@ -20,19 +21,21 @@ CREATE OR REPLACE TABLE DWH."Yelp_Checkin_Facts"
 );
 
 
-
 INSERT INTO DWH."Yelp_Checkin_Facts" ("business_id",
-                                      "checkin_date",
-                                      "stars", "precipitation",
+                                      "review_date",
+                                      "business_name",
+                                      "stars",
+                                      "precipitation",
                                       PRECIPITATION_NORMAL,
                                       "max_temp",
                                       "min_temp",
                                       "normal_max_temp",
                                       "normal_min_temp",
                                       "temp_closed")
-select ODS."Yelp_Checkin"."business_id",
-       TO_Date(ODS."Yelp_Checkin"."date"),
-       ODS."Yelp_Business"."stars",
+select ODS."Yelp_Review"."business_id",
+       TO_Date(ODS."Yelp_Review"."date"),
+       ODS."Yelp_Business"."name",
+       ODS."Yelp_Review"."stars",
        ODS."Weather_Precipitation".PRECIPITATION as rain,
        ODS."Weather_Precipitation".PRECIPITATION_NORMAL,
        ODS."Weather_Temperature"."MAX"           as max_temp,
@@ -40,13 +43,13 @@ select ODS."Yelp_Checkin"."business_id",
        ODS."Weather_Temperature".NORMAL_MAX,
        ODS."Weather_Temperature".NORMAL_MIN,
        ODS."Yelp_Covid"."temporary_closed_until"
-FROM ODS."Yelp_Checkin"
-         INNER JOIN ODS."Yelp_Business" on ODS."Yelp_Checkin"."business_id" = ODS."Yelp_Business"."business_id"
-         LEFT JOIN ODS."Weather_Precipitation" on REPLACE(TO_CHAR(TO_DATE(ODS."Yelp_Checkin"."date")), '' - '') =
+FROM ODS."Yelp_Review"
+         INNER JOIN ODS."Yelp_Business" on ODS."Yelp_Review"."business_id" = ODS."Yelp_Business"."business_id"
+         LEFT JOIN ODS."Weather_Precipitation" on REPLACE(TO_CHAR(ODS."Yelp_Review"."date"), '-') =
                                                   TO_CHAR(ODS."Weather_Precipitation"."DATE")
-         LEFT JOIN ODS."Weather_Temperature" on REPLACE(TO_CHAR(TO_DATE(ODS."Yelp_Checkin"."date")), '' - '') =
+         LEFT JOIN ODS."Weather_Temperature" on REPLACE(TO_CHAR(ODS."Yelp_Review"."date"), '-') =
                                                 TO_CHAR(ODS."Weather_Temperature"."DATE")
-         LEFT JOIN ODS."Yelp_Covid" on ODS."Yelp_Checkin"."business_id" = ODS."Yelp_Covid"."business_id";
+         LEFT JOIN ODS."Yelp_Covid" on ODS."Yelp_Review"."business_id" = ODS."Yelp_Covid"."business_id";
 
 
 ---Business Dim Table---
@@ -206,4 +209,27 @@ SELECT "review_id",
        "funny",
        "cool"
 FROM ODS."Yelp_Review";
+
+----
+
+---TESt
+----
+
+CREATE OR REPLACE TABLE DWH."Yelp_Checkin_Facts_TEST"
+(
+    "id"                   NUMBER AUTOINCREMENT start 1 increment 1,
+    "business_id"          STRING,
+    "checkin_date"         date,
+    "stars"                DOUBLE,
+    "precipitation"        float,
+    "PRECIPITATION_NORMAL" float,
+    "max_temp"             NUMBER,
+    "min_temp"             NUMBER,
+    "normal_max_temp"      NUMBER,
+    "normal_min_temp"      NUMBER,
+    "temp_closed"          STRING,
+    primary key ("id")
+);
+
+
 
